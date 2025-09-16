@@ -1,0 +1,113 @@
+@let role = ((user$ | async)?.role ?? '').toUpperCase();
+
+<!-- Debug temporal -->
+
+<div class="p-4 sm:p-6" *ngIf="vm$ | async as vm">
+
+  <!-- Header -->
+  <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+    <h1 class="text-2xl font-bold text-slate-800">Productos</h1>
+
+    @if(role === 'ADMINISTRATOR'){
+      <button (click)="agregarProducto()"
+        class="rounded-md bg-primary-500 px-4 py-2 text-sm font-semibold text-gray shadow hover:bg-primary-600 transition">
+        + Agregar producto
+      </button>
+    }
+  </header>
+
+  <!-- Toolbar -->
+  <section class="mb-6">
+    <form [formGroup]="formBusqueda"
+          class="grid grid-cols-1 sm:grid-cols-3 gap-4"
+          (ngSubmit)="filtrar()">
+
+      <!-- Buscador -->
+      <div class="relative">
+        <input type="text" placeholder="Buscar producto..." formControlName="nombreProducto"
+          class="w-full rounded-lg border border-slate-300 pl-9 pr-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-primary-300 outline-none" />
+        <svg class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400"
+          viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="11" cy="11" r="7" stroke-width="2" />
+          <path d="m21 21-4.3-4.3" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+
+      <!-- Categorías -->
+      <div>
+        <select formControlName="categoriaId"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:ring-2 focus:ring-primary-300">
+          <option [ngValue]="null" disabled>Seleccione una categoría</option>
+          <option *ngFor="let c of (categorias$ | async)?.items; trackBy: trackByCatId" [ngValue]="c.id">
+            {{ c.name }}
+          </option>
+        </select>
+        <p *ngIf="(categorias$ | async)?.items?.length === 0" class="text-xs text-slate-500 mt-1">
+          No hay categorías disponibles.
+        </p>
+      </div>
+
+      <!-- Botón filtrar -->
+      <div>
+        <button type="submit"
+          class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-slate-100 border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-200 transition">
+          <i class="fa-solid fa-filter text-slate-600"></i>
+          Filtrar
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Tabla -->
+  <app-table [headers]="vm.headers" [rows]="vm.rows" [total]="vm.total"
+             [pageIndex]="vm.page" [pageSize]="vm.pageSize" [loading]="vm.loading"
+             (sortChange)="onSort($event.key!, $event.dir)"
+             (pageChange)="onPage($event)"
+             (pageSizeChange)="onPageSize($event)">
+    <ng-template let-row>
+      <tr class="hover:bg-slate-50">
+        <td class="px-4 py-3 font-medium text-slate-800">{{ row.name }}</td>
+        <td class="px-4 py-3 text-slate-700 max-w-[20rem] truncate" [title]="row.description">
+          {{ row.descripcion }}
+        </td>
+        <td class="px-4 py-3 text-right text-slate-700">{{ row.price | currency }}</td>
+        <td class="px-4 py-3">{{ row.quantity }}</td>
+        <td class="px-4 py-3">{{ row.category }}</td>
+        <td class="px-4 py-3">
+          @if(role === 'ADMINISTRATOR'){
+            <div class="flex items-center gap-2">
+              <!-- Editar -->
+              <button type="button" (click)="editar(row.id)"
+                class="group relative h-8 w-8 flex items-center justify-center rounded-md border border-slate-300 bg-white hover:bg-slate-100 focus:ring-2 focus:ring-primary-300">
+                <i class="fa-solid fa-pen-to-square text-xs text-slate-700"></i>
+                <span
+                  class="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded bg-slate-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition">
+                  Editar
+                </span>
+              </button>
+
+              <!-- Eliminar -->
+              <button type="button" (click)="showEliminar(row.id, row.name)"
+                class="group relative h-8 w-8 flex items-center justify-center rounded-md border border-slate-300 bg-white hover:bg-slate-100 focus:ring-2 focus:ring-red-400">
+                <i class="fa-solid fa-trash text-xs text-red-600"></i>
+                <span
+                  class="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded bg-slate-800 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition">
+                  Eliminar
+                </span>
+              </button>
+            </div>
+          }
+        </td>
+      </tr>
+    </ng-template>
+  </app-table>
+</div>
+
+<!-- Modal de alerta -->
+<alert-component [visible]="showAlerta"
+                 [btnAceptarVisible]="true"
+                 [message]="mensaje"
+                 type="warning"
+                 (close)="closeAlerta()"
+                 (eliminar)="eliminar()">
+</alert-component>

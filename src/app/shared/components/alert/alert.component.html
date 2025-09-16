@@ -1,0 +1,58 @@
+<!-- alert-toast.component.html -->
+<div *ngIf="visible"
+  class="fixed top-5 right-5 z-50 w-80 animate-slide-in">
+  
+  <div
+    class="flex items-start gap-3 rounded-xl shadow-lg border-l-8 p-4 bg-white relative"
+    [ngClass]="{
+      'border-blue-500': type === 'info',
+      'border-green-500': type === 'success',
+      'border-red-500': type === 'error',
+      'border-yellow-500': type === 'warning'
+    }">
+
+    <!-- Icono -->
+    <div class="flex-shrink-0">
+      <i class="text-2xl"
+        [class]="iconClass"
+        [ngClass]="{
+          'text-blue-500': type === 'info',
+          'text-green-500': type === 'success',
+          'text-red-500': type === 'error',
+          'text-yellow-500': type === 'warning'
+        }">
+      </i>
+    </div>
+
+    <!-- Contenido -->
+    <div class="flex-1">
+      <h3 class="font-semibold text-gray-800">
+        {{ title }}
+      </h3>
+      <p class="text-sm text-gray-600 mt-1">
+        {{ message }}
+      </p>
+
+      <!-- Botones -->
+      <div class="mt-3 flex gap-2">
+        @if (btnAceptarVisible) {
+          <button type="button" (click)="eliminar.emit()"
+            class="px-3 py-1.5 rounded-md text-white bg-primary hover:bg-primary-900 text-sm transition">
+            Aceptar
+          </button>
+        }
+
+        <button type="button" (click)="close.emit()"
+          class="px-3 py-1.5 rounded-md border border-gray-300 bg-white hover:bg-gray-100 text-gray-700 text-sm transition">
+          Cerrar
+        </button>
+      </div>
+    </div>
+
+    <!-- Botón de cerrar -->
+    <button (click)="close.emit()"
+      class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+</div>

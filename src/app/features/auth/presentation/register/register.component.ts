@@ -31,7 +31,7 @@ export class RegisterComponent {
 
 
   form = this.fb.nonNullable.group({
-    user:['', Validators.required],
+    username:['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
     confirmPassword: ['', [Validators.required]],
@@ -53,7 +53,7 @@ export class RegisterComponent {
         email: this.form.value.email ?? '',
         password: this.form.value.password ?? '',
         role: this.form.value.role ?? '',
-        username: this.form.value.user ?? ''
+        username: this.form.value.username ?? ''
       }
 
       this.authFacade.register(registerRequest)

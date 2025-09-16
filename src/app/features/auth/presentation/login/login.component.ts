@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectAuthError, selectIsAuthenticated, selectLoading } from '../../../../core/state/auth/auth.selectors';
-import { login } from '../../../../core/state/auth';
+import { login } from '../../../../core/state';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -29,7 +29,7 @@ export default class LoginComponent {
   readonly isAuthenticated = this.store.selectSignal(selectIsAuthenticated);
 
   form: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+    username: ['', [Validators.required]],
     password: ['', Validators.required],
   });
 
@@ -41,7 +41,7 @@ export default class LoginComponent {
     }
 
     this.store.dispatch(login({
-      username: this.form.value.email,
+      username: this.form.value.username,
       password: this.form.value.password,
     }));
 

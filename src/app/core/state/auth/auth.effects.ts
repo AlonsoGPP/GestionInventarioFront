@@ -15,7 +15,7 @@ export class AuthEffects {
             ofType(AuthActions.login),
             mergeMap(action =>
                 this.authFacade.login(action.username,action.password).pipe(
-                    map(({email, id, role, token, username}) => AuthActions.loginSuccess({ token, user: {email, role, username} })),
+                    map(({email, id, role, token, username}) => AuthActions.loginSuccess({ token, user: {email, role, username,id} })),
                     catchError(error => of(AuthActions.loginFailure({ error })))
                 )
             )
@@ -26,7 +26,7 @@ export class AuthEffects {
         () =>
             this.actions$.pipe(
                 ofType(AuthActions.loginSuccess),
-                tap(() => this.router.navigate(['/products']))
+                tap(() => this.router.navigate(['/products/listar']))
             ),
         { dispatch: false }
     );

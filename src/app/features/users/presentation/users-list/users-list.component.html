@@ -1,0 +1,47 @@
+@let role = ((user$ | async)?.role ?? '').toUpperCase();
+<p class="text-xs text-red-500 mb-2">DEBUG Role: {{ role }}</p>
+
+<!-- Debug temporal -->
+<p class="text-xs text-red-500 mb-2">DEBUG Role: {{ role }}</p>
+
+<div class="p-4 sm:p-6" *ngIf="vm$ | async as vm">
+    <p class="text-xs text-red-500 mb-2">DEBUG Role: {{ vm  |json }}</p>
+
+
+  <!-- Header -->
+  <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+    <h1 class="text-2xl font-bold text-slate-800">Productos</h1>
+
+    @if(role === 'ADMINISTRATOR'){
+      <button (click)="registrarUsuario()"
+        class="rounded-md bg-primary-500 px-4 py-2 text-sm font-semibold text-gray shadow hover:bg-primary-600 transition">
+        + Agregar producto
+      </button>
+    }
+  </header>
+
+  <!-- Toolbar -->
+
+
+  <!-- Tabla -->
+  <app-table [headers]="vm.headers" [rows]="vm.rows" [total]="vm.total"
+             [pageIndex]="vm.page" [pageSize]="vm.pageSize" [loading]="vm.loading"
+             (sortChange)="onSort($event.key!, $event.dir)"
+             (pageChange)="onPage($event)"
+             (pageSizeChange)="onPageSize($event)">
+    <ng-template let-row>
+      <tr class="hover:bg-slate-50">
+        <td class="px-4 py-3 font-medium text-slate-800">{{ row.username }}</td>
+        <td class="px-4 py-3 text-slate-700 max-w-[20rem] truncate" [title]="row.description">
+          {{ row.email }}
+        </td>
+        <td class="px-4 py-3 text-right text-slate-700">{{ row.role  }}</td>
+        <td class="px-4 py-3">{{ row.createdAt }}</td>
+        <td class="px-4 py-3">{{ row.category }}</td>
+        <td class="px-4 py-3">
+        </td>
+      </tr>
+    </ng-template>
+  </app-table>
+</div>
+

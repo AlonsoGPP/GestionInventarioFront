@@ -7,8 +7,16 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { AuthRepository } from './features/auth/domain';
 import { AuthService } from './features/auth/infrastructure/services/auth.service';
 import { provideStore } from '@ngrx/store';
-import { AuthEffects, authFeatureKey, authReducer } from './core/state/auth';
+import { AuthEffects, authFeatureKey, authReducer } from './core/state';
 import { provideEffects } from '@ngrx/effects';
+import { ProductoRepository } from './features/products/domain/repository/produt.repository';
+import { ProductService } from './features/products/infrastructure/services/product.service';
+import { productReducer, productsFeatureKey } from './core/state/products/products.reducer';
+import { ProductEffects } from './core/state/products/products.effects';
+import { UserRepository } from './features/users/domain/repository/user.repository';
+import { UserService } from './features/users/infrastructure/service/user.service';
+import { userFeatureKey, userReducer } from './core/state/users/user.reducer';
+import { UserEffects } from './core/state/users/user.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,9 +26,13 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([authInterceptor]), 
     ),
     { provide: AuthRepository, useClass: AuthService },
+    { provide: ProductoRepository, useClass: ProductService },
+    { provide: UserRepository, useClass: UserService },
     provideStore({
         [authFeatureKey]: authReducer,
+        [productsFeatureKey]: productReducer,
+        [userFeatureKey]: userReducer
     }),
-    provideEffects([ AuthEffects]),
+    provideEffects([ AuthEffects,ProductEffects,UserEffects]), 
   ]
 };

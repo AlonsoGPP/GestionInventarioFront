@@ -4,12 +4,13 @@ import { map, Observable, tap } from 'rxjs';
 import { AuthRepository, AuthResponse, RegisterUserRequest } from '../../domain';
 import { ResponseBase } from '../../../../core/interfaces';
 import { TokenService } from './token.service';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService implements AuthRepository {
-    private apiUrl = 'https://api.example.com/auth';
+    private apiUrl = environment.API_URL + '/Auth';
 
     constructor(private http: HttpClient, private tokenService:TokenService) {}
      login(username: string, password: string): Observable<AuthResponse> {
